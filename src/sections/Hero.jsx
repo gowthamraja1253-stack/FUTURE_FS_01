@@ -55,7 +55,7 @@ const Hero = () => {
               View Projects
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </a>
-            <a href="#" className="px-8 py-4 rounded-full font-medium border border-white/20 glass glass-hover transition-all flex items-center gap-2 text-white">
+            <a href="/Gowtham_Raja_Resume.pdf" download="Gowtham_Raja_Resume.pdf" target="_blank" rel="noopener noreferrer" className="px-8 py-4 rounded-full font-medium border border-white/20 glass glass-hover transition-all flex items-center gap-2 text-white">
               <Download size={18} />
               Resume
             </a>
