@@ -1,96 +1,206 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Code2, Smartphone, Cpu, ArrowRight, Download } from 'lucide-react';
-import SocialLinks from '../components/SocialLinks';
-const Hero = () => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
+import React, { useState, useEffect } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+import { Download, ArrowRight, Clock } from 'lucide-react';
+import Magnetic from '../components/Magnetic';
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
-  };
+const LocalTime = () => {
+  const [time, setTime] = useState("");
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      // Chennai is IST (UTC+5:30)
+      const options = { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+      setTime(now.toLocaleTimeString('en-US', options));
+    };
+    
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <section id="hero" className="min-h-screen flex items-center justify-center relative pt-20">
-      {/* Background glow effects */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent1/20 rounded-full blur-[120px] pointer-events-none mix-blend-screen opacity-50"></div>
-      <div className="absolute top-1/2 left-1/4 w-[400px] h-[400px] bg-accent2/20 rounded-full blur-[100px] pointer-events-none mix-blend-screen opacity-40 animate-pulse-slow"></div>
+    <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-secondary mt-12 md:mt-24">
+      <Clock size={12} className="text-accent1" />
+      <span>Chennai, IN — {time}</span>
+    </div>
+  );
+};
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10 w-full text-center md:text-left flex flex-col md:flex-row items-center">
-        <motion.div 
-          className="flex-1 space-y-8"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div variants={itemVariants} className="inline-block">
-            <span className="px-4 py-2 rounded-full border border-white/10 glass text-sm text-secondary font-medium tracking-wide">
-              Welcome to my portfolio
-            </span>
+const CinematicLetter = ({ char, index, delayOffset, shouldReduceMotion }) => {
+  // Deterministic pseudo-random values based on character index for consistency
+  const seed = (index * 29) % 100; 
+  
+  const dirX = seed % 2 === 0 ? 1 : -1;
+  const dirY = (seed * 3) % 2 === 0 ? 1 : -1;
+  
+  // Dramatic initial state: spread out, off-screen, deep Z space
+  const startX = shouldReduceMotion ? 0 : dirX * ((seed % 40) + 20) + 'vw';
+  const startY = shouldReduceMotion ? 20 : dirY * ((seed % 30) + 20) + 'vh';
+  const startZ = shouldReduceMotion ? 0 : ((seed * 7) % 1000) - 500;
+  
+  // Dramatic 3D rotations
+  const rotateX = shouldReduceMotion ? 0 : dirX * ((seed * 11) % 180);
+  const rotateY = shouldReduceMotion ? 0 : dirY * ((seed * 13) % 180);
+  const rotateZ = shouldReduceMotion ? 0 : dirX * ((seed * 17) % 90);
+
+  return (
+    <motion.span
+      className="inline-block relative origin-center"
+      initial={{ 
+        opacity: 0, 
+        x: startX, 
+        y: startY, 
+        z: startZ, 
+        rotateX, 
+        rotateY, 
+        rotateZ,
+        scale: shouldReduceMotion ? 1 : 2.5,
+        filter: shouldReduceMotion ? "blur(0px)" : "blur(20px)"
+      }}
+      animate={{ 
+        opacity: 1, 
+        x: 0, 
+        y: 0, 
+        z: 0, 
+        rotateX: 0, 
+        rotateY: 0, 
+        rotateZ: 0,
+        scale: 1,
+        filter: "blur(0px)"
+      }}
+      transition={{
+        type: "spring",
+        damping: 12,    // Allows a very natural overshoot
+        stiffness: 90,  // Energetic but heavy
+        mass: 1.2,      // Gives the letters a sense of weight and power
+        delay: delayOffset + index * 0.05,
+      }}
+    >
+      {char === " " ? "\u00A0" : char}
+    </motion.span>
+  );
+};
+
+const CinematicWord = ({ text, delayOffset = 0, className = "" }) => {
+  const shouldReduceMotion = useReducedMotion();
+  const letters = Array.from(text);
+  
+  return (
+    <span 
+      className={`inline-flex relative ${className}`} 
+      style={{ perspective: "1500px", transformStyle: "preserve-3d" }}
+    >
+      {letters.map((char, i) => (
+        <CinematicLetter 
+          key={i} 
+          char={char} 
+          index={i} 
+          delayOffset={delayOffset} 
+          shouldReduceMotion={shouldReduceMotion} 
+        />
+      ))}
+    </span>
+  );
+};
+
+const Hero = () => {
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 1000], [0, 200]);
+  const opacity = useTransform(scrollY, [0, 500], [1, 0]);
+  const shouldReduceMotion = useReducedMotion();
+
+  return (
+    <section id="hero" className="relative min-h-screen flex items-center pt-24 overflow-hidden bg-background">
+      {/* Decorative accent shape */}
+      <div className="absolute right-0 top-0 w-[40vw] h-[100vh] bg-accent1/5 rounded-l-full mix-blend-multiply pointer-events-none"></div>
+
+      <motion.div 
+        style={{ y: y1, opacity }}
+        className="max-w-7xl mx-auto px-6 w-full grid md:grid-cols-12 gap-8 items-center"
+      >
+        <div className="md:col-span-12 lg:col-span-10">
+          <motion.p
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-xs uppercase tracking-[0.2em] font-bold text-accent1 mb-6"
+          >
+            Portfolio
+          </motion.p>
+
+          <motion.div
+            initial={false}
+            animate={{ 
+              scale: shouldReduceMotion ? 1 : [1, 1.02, 1],
+              z: shouldReduceMotion ? 0 : [0, 30, 0],
+              filter: shouldReduceMotion ? "none" : [
+                "drop-shadow(0px 0px 0px rgba(255,77,0,0))", 
+                "drop-shadow(0px 0px 20px rgba(255,77,0,0.2))", 
+                "drop-shadow(0px 0px 0px rgba(255,77,0,0))"
+              ]
+            }}
+            transition={{ delay: 1.8, duration: 1.2, ease: "easeInOut" }}
+            className="relative mb-8 transform-gpu"
+            style={{ perspective: "2000px", transformStyle: "preserve-3d" }}
+          >
+            {/* Final Impact: Subtle Glow Sweep */}
+            {!shouldReduceMotion && (
+              <motion.div 
+                className="absolute inset-0 z-20 pointer-events-none bg-gradient-to-r from-transparent via-accent1/30 to-transparent mix-blend-overlay"
+                initial={{ x: "-100%", opacity: 0 }}
+                animate={{ x: "100%", opacity: [0, 1, 0] }}
+                transition={{ delay: 1.8, duration: 1.2, ease: "easeInOut" }}
+                style={{ skewX: "-20deg" }}
+              />
+            )}
+            
+            <h1 className="text-[12vw] md:text-[8vw] leading-[0.9] font-serif font-black tracking-tighter flex flex-wrap gap-x-4 md:gap-x-8 gap-y-2 relative z-10">
+              <CinematicWord text="Gowtham" delayOffset={0.1} className="text-primary" />
+              <CinematicWord text="Raja" delayOffset={0.5} className="text-secondary" />
+            </h1>
           </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8 items-end relative z-30">
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 1.8 }}
+              className="text-lg md:text-xl text-primary/70 font-light leading-relaxed max-w-md"
+            >
+              Full Stack Developer & AI Enthusiast engineering robust software systems and crafting meticulous digital experiences.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 2.0 }}
+              className="flex flex-col sm:flex-row items-start sm:items-center gap-6"
+            >
+              <Magnetic>
+                <a href="#projects" className="group flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-primary hover:text-accent1 transition-colors py-4 px-2">
+                  Explore Work
+                  <span className="w-10 h-px bg-primary group-hover:bg-accent1 group-hover:w-16 transition-all duration-300"></span>
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <a href="/Gowtham_Raja_Resume.pdf" download="Gowtham_Raja_Resume.pdf" target="_blank" rel="noopener noreferrer" className="group flex items-center gap-2 text-sm font-medium text-secondary hover:text-primary transition-colors py-4 px-2">
+                  <Download size={16} className="group-hover:-translate-y-1 transition-transform" />
+                  Resume
+                </a>
+              </Magnetic>
+            </motion.div>
+          </div>
           
-          <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight">
-            Hi, I'm <br className="hidden md:block"/>
-            <span className="text-gradient">Gowtham Raja</span>
-          </motion.h1>
-          
-          <motion.div variants={itemVariants} className="flex flex-wrap justify-center md:justify-start gap-4 text-xl md:text-2xl text-secondary font-light">
-            <span className="flex items-center gap-2"><Code2 size={24} className="text-accent1" /> Full Stack Developer</span>
-            <span className="hidden md:block text-white/20">•</span>
-            <span className="flex items-center gap-2"><Smartphone size={24} className="text-accent2" /> Android Developer</span>
-            <span className="hidden md:block text-white/20">•</span>
-            <span className="flex items-center gap-2"><Cpu size={24} className="text-accent1" /> AI Enthusiast</span>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 2.2 }}
+          >
+            <LocalTime />
           </motion.div>
-
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 pt-4">
-            <a href="#projects" className="group px-8 py-4 bg-white text-black rounded-full font-medium hover:scale-105 transition-all flex items-center gap-2">
-              View Projects
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </a>
-            <a href="/Gowtham_Raja_Resume.pdf" download="Gowtham_Raja_Resume.pdf" target="_blank" rel="noopener noreferrer" className="px-8 py-4 rounded-full font-medium border border-white/20 glass glass-hover transition-all flex items-center gap-2 text-white">
-              <Download size={18} />
-              Resume
-            </a>
-          </motion.div>
-
-          <motion.div variants={itemVariants} className="pt-4 flex justify-center md:justify-start">
-            <SocialLinks />
-          </motion.div>
-        </motion.div>
-
-        {/* Decorative elements for right side / floating icons */}
-        <motion.div 
-          className="hidden md:flex flex-1 justify-center relative h-[500px]"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-        >
-          {/* We can use placeholder geometric shapes or icons here */}
-          <div className="absolute top-1/4 right-1/4 animate-float" style={{ animationDelay: '0s' }}>
-             <div className="w-24 h-24 rounded-2xl glass flex items-center justify-center rotate-12 border-accent1/30">
-                <Code2 size={40} className="text-accent1" />
-             </div>
-          </div>
-          <div className="absolute bottom-1/3 right-1/2 animate-float" style={{ animationDelay: '1s' }}>
-             <div className="w-32 h-32 rounded-full glass flex items-center justify-center -rotate-12 border-accent2/30">
-                <Smartphone size={50} className="text-accent2" />
-             </div>
-          </div>
-          <div className="absolute top-1/2 right-0 animate-float" style={{ animationDelay: '2s' }}>
-             <div className="w-20 h-20 rounded-xl glass flex items-center justify-center rotate-45 border-white/20">
-                <Cpu size={32} className="text-white" />
-             </div>
-          </div>
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
     </section>
   );
 };

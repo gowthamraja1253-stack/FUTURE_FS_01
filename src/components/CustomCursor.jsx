@@ -18,7 +18,7 @@ const CustomCursor = () => {
 
   return (
     <motion.div
-      className="fixed top-0 left-0 w-6 h-6 bg-accent1/30 border border-accent1 rounded-full pointer-events-none z-50 mix-blend-screen"
+      className="fixed top-0 left-0 w-6 h-6 bg-accent1/30 border border-accent1 rounded-full pointer-events-none z-[150] mix-blend-screen hidden md:block"
       animate={{
         x: mousePosition.x - 12,
         y: mousePosition.y - 12,

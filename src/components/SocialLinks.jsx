@@ -1,6 +1,39 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa';
+
+const MagneticButton = ({ children, className = "", href }) => {
+  const ref = useRef(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouse = (e) => {
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
+    setPosition({ x: middleX * 0.3, y: middleY * 0.3 });
+  };
+
+  const reset = () => {
+    setPosition({ x: 0, y: 0 });
+  };
+
+  return (
+    <motion.a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x: position.x, y: position.y }}
+      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+      className={className}
+    >
+      {children}
+    </motion.a>
+  );
+};
 
 const SocialLinks = ({ className = "" }) => {
   const links = [
@@ -27,22 +60,17 @@ const SocialLinks = ({ className = "" }) => {
   return (
     <div className={`flex gap-4 ${className}`}>
       {links.map((link, idx) => (
-        <motion.a
+        <MagneticButton
           key={idx}
           href={link.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          whileHover={{ scale: 1.1, y: -4 }}
-          whileTap={{ scale: 0.95 }}
-          className={`group relative p-4 rounded-full glass border-white/10 transition-all duration-300 text-secondary bg-white/5 ${link.glowHover}`}
+          className={`group relative p-4 rounded-full glass border-white/10 transition-colors duration-300 text-secondary bg-white/[0.03] ${link.glowHover}`}
         >
           {link.icon}
-          
           {/* Tooltip */}
-          <span className="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 text-xs font-semibold text-white bg-black/80 rounded border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
+          <span className="absolute -top-12 left-1/2 -translate-x-1/2 px-3 py-1.5 text-xs font-medium text-white bg-black/90 backdrop-blur-md rounded-lg border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap translate-y-2 group-hover:translate-y-0">
             {link.name}
           </span>
-        </motion.a>
+        </MagneticButton>
       ))}
     </div>
   );

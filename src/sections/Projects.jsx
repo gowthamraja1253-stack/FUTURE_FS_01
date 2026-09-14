@@ -1,169 +1,166 @@
-import React, { useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ExternalLink } from 'lucide-react';
 import { FaGithub } from 'react-icons/fa';
 
-const ProjectCard = ({ project, idx }) => {
-  const ref = useRef(null);
-
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const mouseXSpring = useSpring(x);
-  const mouseYSpring = useSpring(y);
-
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["10deg", "-10deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-10deg", "10deg"]);
-
-  const handleMouseMove = (e) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-    
-    x.set(xPct);
-    y.set(yPct);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: idx * 0.1 }}
-      style={{ perspective: 1000 }}
-      className="h-full"
-    >
-      <motion.div
-        ref={ref}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          rotateX,
-          rotateY,
-          transformStyle: "preserve-3d",
-        }}
-        className={`relative overflow-hidden glass p-8 rounded-3xl border-white/10 ${project.borderHover} transition-colors duration-500 group h-full flex flex-col`}
-      >
-        {/* Background gradient blur */}
-        <div className={`absolute -right-20 -top-20 w-64 h-64 bg-gradient-to-br ${project.color} blur-[80px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none transform-gpu`}></div>
-        
-        <div className="relative z-10 flex flex-col h-full transform-gpu" style={{ transform: "translateZ(30px)" }}>
-          <div className="flex justify-between items-start mb-4 gap-4">
-            <h3 className="text-2xl font-bold text-white group-hover:text-accent1 transition-colors">
-              {project.title}
-            </h3>
-            {project.status && (
-              <span className={`shrink-0 text-xs font-bold px-3 py-1 rounded-full ${project.statusColor || 'bg-accent1/20 text-accent1 border border-accent1/30'}`}>
-                {project.status}
-              </span>
-            )}
-          </div>
-          
-          <p className="text-secondary mb-8 flex-grow leading-relaxed">
-            {project.description}
-          </p>
-          
-          <div className="flex flex-wrap gap-2 mb-8">
-            {project.tags.map((tag, tIdx) => (
-              <span key={tIdx} className="text-xs font-semibold px-3 py-1 bg-white/5 rounded-full text-white/70 border border-white/5">
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap gap-4 mt-auto">
-            {project.github && (
-              <a 
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm font-medium text-white/80 hover:text-white px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/5 hover:border-white/20 group/btn"
-              >
-                <FaGithub size={16} className="group-hover/btn:scale-110 transition-transform" />
-                GitHub
-              </a>
-            )}
-            {project.demo && (
-              <a 
-                href={project.demo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm font-medium text-white/80 hover:text-white px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/5 hover:border-white/20 group/btn"
-              >
-                <ExternalLink size={16} className="group-hover/btn:scale-110 transition-transform" />
-                Live Demo
-              </a>
-            )}
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-};
+import gmusicImg from '../assets/projects/gmusic.jpg';
+import tripnestImg from '../assets/projects/tripnest.jpg';
+import medReminderImg from '../assets/projects/med_reminder.jpg';
+import vehicleServiceImg from '../assets/projects/vehicle_service.jpg';
 
 const Projects = () => {
+  const [hoveredProject, setHoveredProject] = useState(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const updateMouse = (e) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+    };
+    if (hoveredProject !== null) {
+      window.addEventListener('mousemove', updateMouse);
+    }
+    return () => window.removeEventListener('mousemove', updateMouse);
+  }, [hoveredProject]);
+
   const projects = [
     {
       title: "Gmusic – Feel the Isai",
-      description: "Modern South Indian music web application with immersive UI and smooth music experience.",
+      description: "Modern South Indian music web application with immersive UI and smooth music experience. Focuses on seamless audio streaming and cultural aesthetic.",
       tags: ["C++", "Android", "UI/UX"],
       github: "https://github.com/gowthamraja1253-stack/Gmusic",
       demo: "https://gmusic-three.vercel.app",
       status: "Live",
-      statusColor: "bg-green-500/20 text-green-400 border border-green-500/30",
-      color: "from-blue-500/20 to-purple-500/20",
-      borderHover: "hover:border-blue-500/50"
+      image: gmusicImg
+    },
+    {
+      title: "TRIPNEST",
+      description: "A comprehensive travel booking and management platform developed during my Infosys Springboard internship.",
+      tags: ["Full Stack", "Web App", "Internship"],
+      demo: "https://tripnest-frontend-s6wx.onrender.com",
+      status: "Internship Project",
+      image: tripnestImg
     },
     {
       title: "Med Reminder",
       description: "Medication reminder full-stack web application built during Hackcelerate’26 to help users track medicine schedules efficiently.",
       tags: ["Full Stack", "Web App", "Hackathon"],
-      github: "#",
       demo: "https://dev-dynamos-med-reminder.vercel.app",
-      status: "Hackathon Project",
-      statusColor: "bg-purple-500/20 text-purple-400 border border-purple-500/30",
-      color: "from-green-500/20 to-emerald-500/20",
-      borderHover: "hover:border-green-500/50"
+      status: "Hackathon",
+      image: medReminderImg
     },
     {
-      title: "Vehicle Service Center Management",
+      title: "Vehicle Service Center",
       description: "Collaborative vehicle management application focused on data organization, scalable UI, and efficient service tracking.",
       tags: ["C++", "Database", "Scalable UI"],
       github: "https://github.com/shivji2138/vehicle_service_center_management",
-      color: "from-orange-500/20 to-red-500/20",
-      borderHover: "hover:border-orange-500/50"
+      image: vehicleServiceImg
     }
   ];
 
   return (
-    <section id="projects" className="py-24 relative">
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Projects</h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-accent1 to-accent2 rounded-full"></div>
-        </motion.div>
+    <section id="projects" className="py-32 relative bg-primary text-surface">
+      
+      {/* Floating Dynamic Preview Image */}
+      <AnimatePresence>
+        {hoveredProject !== null && projects[hoveredProject].image && (
+          <motion.img
+            initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+            animate={{ 
+              opacity: 1, 
+              scale: 1, 
+              rotate: (mousePos.x % 10) - 5, // Subtle dynamic tilt based on mouse X
+              x: mousePos.x + 20,
+              y: mousePos.y + 20,
+            }}
+            exit={{ opacity: 0, scale: 0.8, rotate: 0 }}
+            transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.2 }}
+            src={projects[hoveredProject].image}
+            alt="Project Preview"
+            className="fixed top-0 left-0 w-72 h-48 md:w-[400px] md:h-[250px] object-cover pointer-events-none z-[100] shadow-2xl hidden md:block border-2 border-surface/10 rounded-xl"
+          />
+        )}
+      </AnimatePresence>
 
-        <div className="grid md:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        
+        <div className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-surface/20 pb-12">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-6xl md:text-8xl font-serif font-black tracking-tighter">Selected<br/>Works.</h2>
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-surface/60 max-w-sm mt-8 md:mt-0 font-light text-lg"
+          >
+            A showcase of digital products, hackathon prototypes, and robust system architectures.
+          </motion.p>
+        </div>
+
+        <div className="flex flex-col gap-32">
           {projects.map((project, idx) => (
-            <ProjectCard key={idx} project={project} idx={idx} />
+            <motion.div 
+              key={idx}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className={`flex flex-col gap-8 md:gap-16 ${idx % 2 !== 0 ? 'md:flex-row-reverse' : 'md:flex-row'} items-center group`}
+            >
+              
+              {/* Massive Title Block */}
+              <div 
+                className="w-full md:w-1/2 cursor-crosshair"
+                onMouseEnter={() => setHoveredProject(idx)}
+                onMouseLeave={() => setHoveredProject(null)}
+              >
+                <h3 className="text-4xl md:text-5xl lg:text-7xl font-serif font-bold leading-[1.1] tracking-tight text-surface/50 group-hover:text-accent1 transition-colors duration-500">
+                  {project.title}
+                </h3>
+                {project.status && (
+                  <span className="inline-block mt-6 text-[10px] uppercase tracking-[0.2em] font-bold px-4 py-2 border border-surface/20 rounded-full text-surface group-hover:border-accent1 group-hover:text-accent1 transition-colors">
+                    {project.status}
+                  </span>
+                )}
+              </div>
+
+              {/* Description & Links */}
+              <div className="w-full md:w-1/2 p-8 md:p-12 bg-surface/5 border border-surface/10 rounded-none md:rounded-3xl hover:bg-surface/10 transition-colors duration-500 relative overflow-hidden">
+                <div className="absolute -inset-full w-full h-full bg-gradient-to-tr from-accent1/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full blur-[100px]"></div>
+                
+                <p className="text-lg md:text-xl text-surface/80 font-light leading-relaxed mb-10 relative z-10">
+                  {project.description}
+                </p>
+                
+                <div className="flex flex-wrap gap-3 mb-12 relative z-10">
+                  {project.tags.map((tag, tIdx) => (
+                    <span key={tIdx} className="text-xs font-medium px-4 py-1.5 bg-surface text-primary rounded-full">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex gap-6 relative z-10">
+                  {project.github && project.github !== "#" && (
+                    <a href={project.github} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-semibold uppercase tracking-widest hover:text-accent1 transition-colors">
+                      <FaGithub size={18} />
+                      Source Code
+                    </a>
+                  )}
+                  {project.demo && (
+                    <a href={project.demo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-semibold uppercase tracking-widest hover:text-accent2 transition-colors">
+                      <ExternalLink size={18} />
+                      Live Demo
+                    </a>
+                  )}
+                </div>
+              </div>
+              
+            </motion.div>
           ))}
         </div>
       </div>

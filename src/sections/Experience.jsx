@@ -1,62 +1,75 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase } from 'lucide-react';
 
 const Experience = () => {
   const experiences = [
     {
+      title: "Marketing Vice Head",
+      company: "AWS Cloud Club",
+      date: "Aug 2026 - Present",
+      description: "Leading marketing initiatives, managing outreach campaigns, and promoting cloud computing technologies and events to the community.",
+    },
+    {
+      title: "Software Engineer Intern",
+      company: "Cybernaut EdTech",
+      date: "Aug 2026 - Present",
+      description: "Software Development intern working remotely from Chennai. Focused on building robust software solutions and enhancing application architecture.",
+    },
+    {
+      title: "Full Stack Web Development Intern",
+      company: "Future Interns",
+      date: "May 2026 - Jun 2026",
+      description: "Completed a comprehensive full-stack web development internship. Focused on front-end and back-end integration to build real-world web applications.",
+    },
+    {
       title: "Technical Team Member",
       company: "Beta Bots | SRM RMP",
-      date: "Sep 2025 - Present",
+      date: "Sep 2025 - Jul 2026",
       description: "Collaborated with cross-functional teams to build and prototype robotic systems. Organized technical workshops and led sessions on rapid prototyping.",
     },
     {
-      title: "GPT Intern",
+      title: "Student Intern",
       company: "Futura Robotics",
-      date: "Summer 2023",
-      description: "Developed custom GPT solutions and prompt engineering strategies to automate internal workflows. Explored AI integrations for robotic processes.",
+      date: "May 2023 - Jun 2023",
+      description: "🚀 GPT Internship at Futura Robotics. I had the opportunity to intern at Futura Robotics, where I explored custom GPT solutions and prompt engineering strategies to automate internal workflows.",
     }
   ];
 
   return (
-    <section id="experience" className="py-24 relative">
-      <div className="max-w-4xl mx-auto px-6 relative z-10">
+    <section id="experience" className="py-32 relative bg-background border-t border-primary/10">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="mb-16 text-center"
+          viewport={{ once: true }}
+          className="mb-20 flex flex-col md:flex-row md:items-end justify-between border-b border-primary/20 pb-8"
         >
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Experience</h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-accent1 to-accent2 rounded-full mx-auto"></div>
+          <h2 className="text-5xl md:text-7xl font-serif font-black text-primary tracking-tighter">Experience</h2>
+          <p className="text-secondary text-sm uppercase tracking-[0.2em] font-bold mt-6 md:mt-0">Career Timeline</p>
         </motion.div>
 
-        <div className="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-white/20 before:to-transparent">
+        <div className="flex flex-col border-b border-primary/20">
           {experiences.map((exp, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: idx * 0.2 }}
-              className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active"
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              className="grid md:grid-cols-12 gap-8 py-10 md:py-16 border-t border-primary/20 hover:bg-surface/50 transition-colors group"
             >
-              {/* Timeline Icon */}
-              <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white/20 glass bg-background text-accent1 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                <Briefcase size={18} />
+              <div className="md:col-span-3">
+                <span className="text-sm font-semibold uppercase tracking-widest text-primary/60 group-hover:text-primary transition-colors">{exp.date}</span>
               </div>
-
-              {/* Card */}
-              <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 rounded-2xl glass border-white/10 hover:border-accent1/30 transition-colors">
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-2 gap-2">
-                  <h3 className="text-xl font-bold text-white">{exp.title}</h3>
-                  <span className="text-sm font-medium text-accent2 px-3 py-1 bg-accent2/10 rounded-full w-fit">
-                    {exp.date}
-                  </span>
-                </div>
-                <h4 className="text-md font-medium text-secondary mb-4">{exp.company}</h4>
-                <p className="text-white/70 leading-relaxed text-sm">
+              
+              <div className="md:col-span-4">
+                <h3 className="text-2xl md:text-3xl font-serif font-bold text-primary group-hover:text-accent2 transition-colors mb-2">{exp.title}</h3>
+                <p className="text-lg font-medium text-secondary">{exp.company}</p>
+              </div>
+              
+              <div className="md:col-span-5">
+                <p className="text-primary/70 font-light leading-relaxed text-base md:text-lg">
                   {exp.description}
                 </p>
               </div>

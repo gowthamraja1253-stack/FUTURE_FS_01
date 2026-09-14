@@ -1,78 +1,78 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Star, Shield, Database } from 'lucide-react';
+import { Trophy, Star, Shield, Database, Award } from 'lucide-react';
 
 const Achievements = () => {
   const achievements = [
     {
       title: "Google Top Prompt Creator",
       issuer: "Google",
-      icon: <Star className="text-yellow-400" size={32} />,
-      gradient: "from-yellow-400/20 to-orange-500/20"
+      icon: <Star size={32} strokeWidth={1.5} />,
+      colSpan: "md:col-span-2",
+      bg: "bg-surface"
     },
     {
       title: "NPTEL Elite Certification",
       issuer: "Java (97/100)",
-      icon: <Trophy className="text-accent1" size={32} />,
-      gradient: "from-blue-400/20 to-cyan-500/20"
+      icon: <Trophy size={32} strokeWidth={1.5} />,
+      colSpan: "md:col-span-1",
+      bg: "bg-primary text-surface"
     },
     {
       title: "Cyber Security",
       issuer: "Infosys Springboard",
-      icon: <Shield className="text-accent2" size={32} />,
-      gradient: "from-purple-400/20 to-pink-500/20"
+      icon: <Shield size={32} strokeWidth={1.5} />,
+      colSpan: "md:col-span-1",
+      bg: "bg-surface"
     },
     {
       title: "MongoDB Basics",
       issuer: "MongoDB",
-      icon: <Database className="text-green-400" size={32} />,
-      gradient: "from-green-400/20 to-emerald-500/20"
+      icon: <Database size={32} strokeWidth={1.5} />,
+      colSpan: "md:col-span-1",
+      bg: "bg-surface"
     },
     {
       title: "HP LIFE Certifications",
       issuer: "HP",
-      icon: <Award className="text-blue-400" size={32} />,
-      gradient: "from-blue-500/20 to-indigo-500/20"
+      icon: <Award size={32} strokeWidth={1.5} />,
+      colSpan: "md:col-span-1",
+      bg: "bg-surface"
     }
   ];
 
-  // We missed importing Award in the initial list, let's fix it above or just redefine here for safety if we change icons.
-  // We'll import it correctly in the code.
-
   return (
-    <section id="achievements" className="py-24 relative">
+    <section id="achievements" className="py-32 relative bg-background">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="mb-16"
+          viewport={{ once: true }}
+          className="mb-20"
         >
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">Achievements</h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-accent1 to-accent2 rounded-full"></div>
+          <h2 className="text-5xl md:text-7xl font-serif font-black tracking-tighter text-primary">Honors<br/><span className="text-secondary italic font-light">&</span> Awards.</h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {achievements.map((item, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
-              whileHover={{ y: -5 }}
-              className="relative p-[1px] rounded-2xl overflow-hidden group"
+              className={`p-10 border border-primary/10 ${item.colSpan} ${item.bg} hover:-translate-y-2 transition-transform duration-500 flex flex-col justify-between min-h-[250px]`}
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-50 group-hover:opacity-100 transition-opacity`}></div>
-              <div className="relative glass h-full p-8 rounded-2xl flex flex-col items-center text-center gap-4">
-                <div className="p-4 bg-background/50 rounded-full border border-white/10 backdrop-blur-md">
-                  {item.icon}
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-1">{item.title}</h3>
-                  <p className="text-secondary text-sm font-medium">{item.issuer}</p>
-                </div>
+              <div className={`mb-8 ${item.bg === 'bg-surface' ? 'text-primary' : 'text-surface'}`}>
+                {item.icon}
+              </div>
+              <div>
+                <p className={`text-xs uppercase tracking-[0.2em] font-bold mb-2 ${item.bg === 'bg-surface' ? 'text-secondary' : 'text-surface/70'}`}>
+                  {item.issuer}
+                </p>
+                <h3 className="text-2xl font-serif font-bold tracking-tight">
+                  {item.title}
+                </h3>
               </div>
             </motion.div>
           ))}
@@ -81,8 +81,5 @@ const Achievements = () => {
     </section>
   );
 };
-
-// Quick fix for missing Award import
-import { Award } from 'lucide-react';
 
 export default Achievements;
