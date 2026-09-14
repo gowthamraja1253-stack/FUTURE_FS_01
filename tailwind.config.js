@@ -7,12 +7,12 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#F9F9F6', // Warm off-white
-        surface: '#FFFFFF',
-        primary: '#111111', // Ink black
-        secondary: '#555555', // Deep gray
+        background: '#09090B', // Deep pitch black
+        surface: '#18181B', // Slightly lighter black for cards
+        primary: '#FFFFFF', // Pure white text
+        secondary: '#A1A1AA', // Grey text
         accent1: '#FF4D00', // Vibrant Orange
-        accent2: '#4361EE', // Electric Blue
+        accent2: '#0047FF', // Electric Blue
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

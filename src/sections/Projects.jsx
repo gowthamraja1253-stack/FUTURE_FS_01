@@ -58,7 +58,7 @@ const Projects = () => {
   ];
 
   return (
-    <section id="projects" className="py-32 relative bg-primary text-surface">
+    <section id="projects" className="py-32 relative bg-surface text-primary">
       
       {/* Floating Dynamic Preview Image */}
       <AnimatePresence>
@@ -76,14 +76,14 @@ const Projects = () => {
             transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.2 }}
             src={projects[hoveredProject].image}
             alt="Project Preview"
-            className="fixed top-0 left-0 w-72 h-48 md:w-[400px] md:h-[250px] object-cover pointer-events-none z-[100] shadow-2xl hidden md:block border-2 border-surface/10 rounded-xl"
+            className="fixed top-0 left-0 w-72 h-48 md:w-[400px] md:h-[250px] object-cover pointer-events-none z-[100] shadow-2xl hidden md:block border-2 border-primary/10 rounded-xl"
           />
         )}
       </AnimatePresence>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         
-        <div className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-surface/20 pb-12">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-24 border-b border-primary/10 pb-12">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -95,7 +95,7 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="text-surface/60 max-w-sm mt-8 md:mt-0 font-light text-lg"
+            className="text-primary/60 max-w-sm mt-8 md:mt-0 font-light text-lg"
           >
             A showcase of digital products, hackathon prototypes, and robust system architectures.
           </motion.p>
@@ -118,21 +118,21 @@ const Projects = () => {
                 onMouseEnter={() => setHoveredProject(idx)}
                 onMouseLeave={() => setHoveredProject(null)}
               >
-                <h3 className="text-4xl md:text-5xl lg:text-7xl font-serif font-bold leading-[1.1] tracking-tight text-surface/50 group-hover:text-accent1 transition-colors duration-500">
+                <h3 className="text-4xl md:text-5xl lg:text-7xl font-serif font-bold leading-[1.1] tracking-tight text-primary/50 group-hover:text-accent1 transition-colors duration-500">
                   {project.title}
                 </h3>
                 {project.status && (
-                  <span className="inline-block mt-6 text-[10px] uppercase tracking-[0.2em] font-bold px-4 py-2 border border-surface/20 rounded-full text-surface group-hover:border-accent1 group-hover:text-accent1 transition-colors">
+                  <span className="inline-block mt-6 text-[10px] uppercase tracking-[0.2em] font-bold px-4 py-2 border border-primary/10 rounded-full text-primary group-hover:border-accent1 group-hover:text-accent1 transition-colors">
                     {project.status}
                   </span>
                 )}
               </div>
 
               {/* Description & Links */}
-              <div className="w-full md:w-1/2 p-8 md:p-12 bg-surface/5 border border-surface/10 rounded-none md:rounded-3xl hover:bg-surface/10 transition-colors duration-500 relative overflow-hidden">
+              <div className="w-full md:w-1/2 p-8 md:p-12 bg-primary/5 border border-primary/10 rounded-none md:rounded-3xl hover:bg-surface/10 transition-colors duration-500 relative overflow-hidden">
                 <div className="absolute -inset-full w-full h-full bg-gradient-to-tr from-accent1/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 rounded-full blur-[100px]"></div>
                 
-                <p className="text-lg md:text-xl text-surface/80 font-light leading-relaxed mb-10 relative z-10">
+                <p className="text-lg md:text-xl text-primary/80 font-light leading-relaxed mb-10 relative z-10">
                   {project.description}
                 </p>
                 
